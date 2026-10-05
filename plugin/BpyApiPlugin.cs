@@ -34,14 +34,13 @@ public sealed class BpyApiPlugin : IPlugin
 
     internal Api? Api { get; private set; }
 
-    /// <summary>Every bancho.py v1 route: method, name (the path after /v1/), handler.</summary>
+    /// <summary>bancho.py's public v1 routes: method, name (the path after /v1/), handler.</summary>
     internal static IReadOnlyList<(string Method, string Name, Endpoint Handler)> Routes { get; } = BuildRoutes();
 
     private static List<(string Method, string Name, Endpoint Handler)> BuildRoutes()
     {
         var routes = new List<(string Method, string Name, Endpoint Handler)>
         {
-            ("GET", "calculate_pp", Unsupported.CalculatePpAsync),
             ("GET", "search_players", Players.SearchAsync),
             ("GET", "get_player_count", Players.CountAsync),
             ("GET", "get_player_info", Players.InfoAsync),
@@ -58,21 +57,16 @@ public sealed class BpyApiPlugin : IPlugin
             ("GET", "get_map_scores", Scores.MapAsync),
             ("GET", "get_score_info", Scores.InfoAsync),
             ("GET", "get_replay", Scores.ReplayAsync),
-            ("GET", "get_match", Unsupported.MatchAsync),
             ("GET", "get_leaderboard", Leaderboards.PlayersAsync),
-            ("GET", "get_user_private_info", Unsupported.PrivateInfoAsync),
             ("GET", "statistics", Players.StatisticsAsync),
             ("GET", "get_all_users", Players.AllUsersAsync),
             ("GET", "get_top_play", Scores.TopPlayAsync),
             ("GET", "get_clan", Leaderboards.ClanAsync),
             ("GET", "get_clans_leaderboard", Leaderboards.ClansAsync),
-            ("GET", "get_mappool", Unsupported.MappoolAsync),
             ("GET", "search_beatmaps", Maps.SearchAsync),
-            ("GET", "get_active_matches", Unsupported.ActiveMatchesAsync),
             ("GET", "get_total_scores", Scores.TotalAsync),
             ("GET", "get_rank_one_history", RankHistory.RankOneAsync),
         };
-        routes.AddRange(Unsupported.BotActions.Select(name => ("POST", name, (Endpoint)Unsupported.BotActionAsync)));
         return routes;
     }
 

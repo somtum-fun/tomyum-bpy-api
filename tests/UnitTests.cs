@@ -332,27 +332,20 @@ public sealed class PluginTests
     }
 
     [Fact]
-    public async Task Unsupported_endpoints_answer_like_bancho_py_with_nothing_set_up()
+    public async Task Only_the_public_api_is_served()
     {
         var (_, context) = await StartAsync();
-        async Task<(int, string)> Get(string path, string method = "GET")
+        // bancho.py's extras (API keys, sessions, matches, pools, the bot's actions) are unknown paths here.
+        foreach (var (method, path) in new[]
+                 {
+                     ("GET", "/v1/calculate_pp?id=75"), ("GET", "/v1/get_match?id=3"), ("GET", "/v1/get_mappool?id=1"),
+                     ("GET", "/v1/get_user_private_info?userid=5"), ("GET", "/v1/get_active_matches"),
+                     ("POST", "/v1/vote_beatmap"), ("POST", "/v1/rank_beatmap"), ("POST", "/v1/restrict_player"),
+                     ("POST", "/v1/whitelist_player"), ("POST", "/v1/donation_approve"),
+                 })
         {
             var response = await context.Routes.SendAsync(method, "api.blueskychan.dev", path);
-            return (response!.StatusCode, Body(response));
-        }
-
-        Assert.Equal((401, "{\"status\":\"Invalid API key.\"}"), await Get("/v1/calculate_pp?id=75"));
-        Assert.Equal((404, "{\"status\":\"Match not found.\"}"), await Get("/v1/get_match?id=3"));
-        Assert.Equal(422, (await Get("/v1/get_match?id=65")).Item1);
-        Assert.Equal((404, "{\"status\":\"Pool not found.\"}"), await Get("/v1/get_mappool?id=1"));
-        Assert.Equal((401, "{\"status\":\"Unauthorized\"}"), await Get("/v1/get_user_private_info?userid=5"));
-        Assert.Equal(422, (await Get("/v1/get_user_private_info")).Item1);
-        Assert.Equal((200, "{\"status\":\"success\",\"count\":0,\"matches\":[]}"), await Get("/v1/get_active_matches"));
-        foreach (var name in Unsupported.BotActions)
-        {
-            Assert.Equal(
-                (503, "{\"success\":false,\"response\":{\"message\":\"bot api token is not configured on this server\"}}"),
-                await Get("/v1/" + name, "POST"));
+            Assert.Equal((404, "{\"detail\":\"Not Found\"}"), (response!.StatusCode, Body(response)));
         }
     }
 
@@ -365,8 +358,8 @@ public sealed class PluginTests
             ["apiPrefix"] = "api/v1/",
             ["websitePrefix"] = string.Empty,
         });
-        Assert.NotNull(await context.Routes.SendAsync("GET", "anything.example.com", "/api/v1/get_active_matches"));
-        Assert.Null(await context.Routes.SendAsync("GET", "osu.example.com", "/bpy-api/v1/get_active_matches"));
+        Assert.NotNull(await context.Routes.SendAsync("GET", "anything.example.com", "/api/v1/get_player_count"));
+        Assert.Null(await context.Routes.SendAsync("GET", "osu.example.com", "/bpy-api/v1/get_player_count"));
     }
 
     [Fact]

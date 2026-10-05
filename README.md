@@ -1,8 +1,9 @@
 # tomyum-bpy-api
 
-A [TomYum](https://github.com/osu-somtum/TomYum) plugin that serves **bancho.py's v1 API** (everything in
+A [TomYum](https://github.com/osu-somtum/TomYum) plugin that serves **bancho.py's public v1 API** (from
 bancho.py's `app/api/v1/api.py`, the osu!somtum fork) on top of TomYum's data, so tools and bots written
-for bancho.py keep working against a TomYum server.
+for bancho.py keep working against a TomYum server. bancho.py's own extras (its API-key and session
+endpoints, matches, mappools and the Discord bot's actions) aren't part of it.
 
 - Same paths, parameters, JSON shapes and errors as bancho.py, including FastAPI's `422 {"detail": [...]}`
   for parameters that don't validate, `404 {"detail": "Not Found"}` for unknown paths and `405` for a
@@ -85,17 +86,6 @@ Vanilla scores keep the website's score ids. TomYum's Relax/Autopilot scores get
 | `GET /search_beatmaps` | Official and uploaded sets. `osu_status` matches an official set's status on the website. |
 | `GET /get_total_scores` | The website's scores plus TomYum's stable Relax/Autopilot plays. |
 | `GET /get_rank_one_history` | |
-
-### Not supported (they answer what bancho.py answers when it has nothing)
-
-| Endpoint | Answer | Why |
-|---|---|---|
-| `GET /calculate_pp` | `401 {"status": "Invalid API key."}` | It needs a bancho.py API key (`users.api_key`). TomYum has no per-player API keys of that kind, and plugins can't reach TomYum's pp calculator. |
-| `GET /get_user_private_info` | `401 {"status": "Unauthorized"}` | It needs a bancho.py frontend session cookie; TomYum has no such sessions. Private data (emails, Discord ids) isn't served. |
-| `GET /get_match` | `404 {"status": "Match not found."}` | The host doesn't share its multiplayer rooms with plugins. |
-| `GET /get_active_matches` | `{"status": "success", "count": 0, "matches": []}` | Same. |
-| `GET /get_mappool` | `404 {"status": "Pool not found."}` | TomYum has no tournament pools. |
-| `POST /vote_beatmap`, `/love_beatmap`, `/rank_beatmap`, `/cancel_beatmap`, `/restrict_player`, `/unrestrict_player`, `/whitelist_player`, `/unwhitelist_player`, `/donation_approve`, `/donation_reject` | `503 {"success": false, "response": {"message": "bot api token is not configured on this server"}}` | bancho.py's Discord-bot actions, authorised with its `BOT_API_TOKEN` and the actor's Discord id. They write data (rankings, restrictions, donations); TomYum does those through its admin panel and admin API, so they're left out. This is bancho.py's own answer when no bot token is set. |
 
 ## Configuration
 
