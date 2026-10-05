@@ -1,0 +1,8 @@
+{
+  "id": "tomyum.bpy-api",
+  "name": "bancho.py API (v1)",
+  "version": "1.0.0",
+  "authors": "Phapoom Saksri",
+  "description": "bancho.py's v1 API (api.<domain>/v1/..., osu.<domain>/bpy-api/v1/...) over TomYum's and the website's data, so tools written for bancho.py keep working.",
+  "entryPoint": "BpyApiPlugin"
+}

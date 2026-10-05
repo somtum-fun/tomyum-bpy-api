@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Tests for the plugin. The plugin itself is loose source (plugin/, mounted into TomYum's plugins
+    directory and compiled by the server); this project compiles the same files against
+    TomYum.Plugins.Abstractions with the server's settings (C# 13, nullable, no implicit usings), so a
+    build here catches what the server's compiler would reject, plus analyzer warnings.
+    Lives outside plugin/ so the server never compiles the tests.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>13</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <RootNamespace>TomYum.Plugins.BpyApi.Tests</RootNamespace>
+    <!-- Test names use underscores. -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../plugin/**/*.cs" LinkBase="plugin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <!-- Only for the live database checks (LiveDatabaseTests); the plugin doesn't use it. -->
+    <PackageReference Include="MySqlConnector" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../TomYum/src/TomYum.Plugins.Abstractions/TomYum.Plugins.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
