@@ -37,6 +37,23 @@ internal sealed class Sql
         HasAccountFlags = hasAccountFlags;
     }
 
+    /// <summary>
+    /// The rankings' inactivity rule, as TomYum's (<c>Ranking:InactiveDays</c>): a player without a score in
+    /// a mode for this many days isn't ranked in it and doesn't count towards anyone else's rank. 0 = off.
+    /// </summary>
+    public int InactiveDays { get; init; }
+
+    /// <summary>" AND (the vanilla stats row <paramref name="alias"/> played lately)", or nothing when the rule is off.</summary>
+    public string VanillaActive(string alias) =>
+        InactiveDays > 0 ? $" AND {alias}.last_played >= UTC_TIMESTAMP() - INTERVAL {InactiveDays.ToString(CultureInfo.InvariantCulture)} DAY" : string.Empty;
+
+    /// <summary>" AND (the Relax/Autopilot stats row <paramref name="alias"/> has a recent score)", or nothing when the rule is off.</summary>
+    public string ModeActive(string alias) =>
+        InactiveDays > 0
+            ? $" AND EXISTS (SELECT 1 FROM {T}.scores a WHERE a.UserId = {alias}.UserId AND a.Mode = {alias}.Mode"
+              + $" AND a.SubmittedAt >= UTC_TIMESTAMP() - INTERVAL {InactiveDays.ToString(CultureInfo.InvariantCulture)} DAY)"
+            : string.Empty;
+
     /// <summary>The website's database, quoted.</summary>
     public string O { get; }
 

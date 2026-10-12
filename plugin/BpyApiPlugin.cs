@@ -110,6 +110,7 @@ public sealed class BpyApiPlugin : IPlugin
             WebsiteSubdomain = config.Get("websiteSubdomain", defaults.WebsiteSubdomain) ?? string.Empty,
             WebsitePrefix = config.Get("websitePrefix", defaults.WebsitePrefix) ?? string.Empty,
             SearchLimit = Math.Clamp(config.Get("searchLimit", defaults.SearchLimit), 1, 100_000),
+            InactiveDays = Math.Clamp(config.Get("inactiveDays", defaults.InactiveDays), 0, 36500),
         };
     }
 

@@ -45,7 +45,7 @@ internal static class Leaderboards
         {
             var column = "s." + Stats.VanillaColumns[sort];
             from = $" FROM {Stats.VanillaTable(sql, mode)} s JOIN {sql.O}.phpbb_users u ON u.user_id = s.user_id AND {Sql.Visible("u")}"
-                + $" WHERE {column} > 0";
+                + $" WHERE {column} > 0{sql.VanillaActive("s")}";
             columns = Stats.VanillaColumnsSql(sql, mode, withRanks: false);
             order = $"{column} DESC, u.user_id";
         }
@@ -53,7 +53,7 @@ internal static class Leaderboards
         {
             var column = Stats.ModeColumns[sort] == "0" ? "0" : "us." + Stats.ModeColumns[sort];
             from = $" FROM {sql.T}.user_stats us JOIN {sql.O}.phpbb_users u ON u.user_id = us.UserId AND {Sql.Visible("u")}"
-                + $" WHERE us.Mode = @mode AND {column} > 0";
+                + $" WHERE us.Mode = @mode AND {column} > 0{sql.ModeActive("us")}";
             parameters["@mode"] = mode;
             columns = Stats.ModeColumnsSql(sql, withRanks: false);
             order = column == "0" ? "u.user_id" : $"{column} DESC, u.user_id";

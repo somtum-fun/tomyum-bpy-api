@@ -108,6 +108,7 @@ plugins:
     domain: ""                    # for links to uploaded sets' covers; "" = the request's host without its first label
     version: "1.0.0+tomyum-bpy-api"   # what /statistics reports
     searchLimit: 1000
+    inactiveDays: 0               # the rankings' inactivity rule, as TomYum's Ranking:InactiveDays (0 = off)
 ```
 
 As environment variables: `TOMYUM_PLUGINS__TRUSTED__<n>=tomyum.bpy-api`, and for example

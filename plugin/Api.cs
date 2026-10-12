@@ -50,6 +50,9 @@ internal sealed class ApiOptions
 
     /// <summary>Most players /search_players lists (bancho.py has no limit).</summary>
     public int SearchLimit { get; set; } = 1000;
+
+    /// <summary>The rankings' inactivity rule in days (set it like TomYum's Ranking:InactiveDays); 0 = off.</summary>
+    public int InactiveDays { get; set; }
 }
 
 /// <summary>Raised by <see cref="Api.Db"/> when the plugin isn't trusted with the database.</summary>
@@ -72,7 +75,7 @@ internal sealed class Api
         ArgumentNullException.ThrowIfNull(options);
         _db = data is null ? null : new Db(data);
         Options = options;
-        Sql = new Sql(options.OsuWebDatabase, options.TomyumDatabase, options.ModeScoreIdOffset);
+        Sql = new Sql(options.OsuWebDatabase, options.TomyumDatabase, options.ModeScoreIdOffset) { InactiveDays = options.InactiveDays };
         Players = players;
         Online = online;
         Logger = logger;

@@ -65,9 +65,10 @@ internal static class Stats
         if (withRanks)
         {
             var above = $"SELECT COUNT(*) FROM {table} ro JOIN {sql.O}.phpbb_users ru ON ru.user_id = ro.user_id"
-                + $" WHERE {Sql.Visible("ru")} AND ro.rank_score > s.rank_score";
-            columns += $", CAST(IF(s.rank_score > 0, 1 + ({above}), 0) AS SIGNED) AS `rank`,"
-                + $" CAST(IF(s.rank_score > 0, 1 + ({above} AND ru.country_acronym = u.country_acronym), 0) AS SIGNED) AS country_rank";
+                + $" WHERE {Sql.Visible("ru")} AND ro.rank_score > s.rank_score{sql.VanillaActive("ro")}";
+            var ranked = $"s.rank_score > 0{sql.VanillaActive("s")}";
+            columns += $", CAST(IF({ranked}, 1 + ({above}), 0) AS SIGNED) AS `rank`,"
+                + $" CAST(IF({ranked}, 1 + ({above} AND ru.country_acronym = u.country_acronym), 0) AS SIGNED) AS country_rank";
         }
 
         return columns;
@@ -90,9 +91,10 @@ internal static class Stats
         if (withRanks)
         {
             var above = $"SELECT COUNT(*) FROM {sql.T}.user_stats ro JOIN {sql.O}.phpbb_users ru ON ru.user_id = ro.UserId"
-                + $" WHERE ro.Mode = us.Mode AND {Sql.Visible("ru")} AND ro.Pp > us.Pp";
-            columns += $", CAST(IF(us.Pp > 0, 1 + ({above}), 0) AS SIGNED) AS `rank`,"
-                + $" CAST(IF(us.Pp > 0, 1 + ({above} AND ru.country_acronym = u.country_acronym), 0) AS SIGNED) AS country_rank";
+                + $" WHERE ro.Mode = us.Mode AND {Sql.Visible("ru")} AND ro.Pp > us.Pp{sql.ModeActive("ro")}";
+            var ranked = $"us.Pp > 0{sql.ModeActive("us")}";
+            columns += $", CAST(IF({ranked}, 1 + ({above}), 0) AS SIGNED) AS `rank`,"
+                + $" CAST(IF({ranked}, 1 + ({above} AND ru.country_acronym = u.country_acronym), 0) AS SIGNED) AS country_rank";
         }
 
         return columns;
