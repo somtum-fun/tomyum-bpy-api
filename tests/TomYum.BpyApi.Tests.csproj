@@ -32,7 +32,7 @@
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
     <!-- Only for the live database checks (LiveDatabaseTests); the plugin doesn't use it. -->
-    <PackageReference Include="MySqlConnector" Version="2.4.0" />
+    <PackageReference Include="MySqlConnector" Version="2.6.2" />
   </ItemGroup>
 
   <ItemGroup>
