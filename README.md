@@ -34,6 +34,8 @@ endpoints, matches, mappools and the Discord bot's actions) aren't part of it.
 Vanilla scores keep the website's score ids. TomYum's Relax/Autopilot scores get their TomYum id **plus
 10,000,000,000** (`modeScoreIdOffset`), so the two kinds never share an id. `/get_score_info` and
 `/get_replay` take either kind, and the website id of a lazer Relax/Autopilot play finds that play too.
+They also take the website's and API v2's form (TomYum id plus 1,000,000,000,000), so an id copied from
+there finds the same play. A bare TomYum id is read as a vanilla score id.
 
 ### Things that work a little differently from bancho.py
 
