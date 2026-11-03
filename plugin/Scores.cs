@@ -197,8 +197,16 @@ internal static class Scores
     }
 
     /// <summary>
+    /// The website's and its API v2's own offset for a Relax/Autopilot play (osu-web
+    /// <c>TomYumModeScores::ID_OFFSET</c>): those ids are taken too, so a score id copied from there
+    /// finds the same play here. Never reached by this API's own ids (TomYum's ids stay far below).
+    /// </summary>
+    public const long WebsiteModeScoreIdOffset = 1_000_000_000_000;
+
+    /// <summary>
     /// Finds a score by the id this API gives it: a website score (vanilla; a lazer Relax/Autopilot
-    /// play's website id finds TomYum's row for it), or TomYum's Relax/Autopilot id plus the offset.
+    /// play's website id finds TomYum's row for it), or TomYum's Relax/Autopilot id plus the offset
+    /// (this API's, or the website's <see cref="WebsiteModeScoreIdOffset"/>).
     /// </summary>
     private static async Task<Row?> FindAsync(Api api, long id, CancellationToken cancellationToken, string extraColumns = "", string extraJoins = "")
     {
@@ -209,7 +217,9 @@ internal static class Scores
         if (id >= sql.ModeScoreIdOffset)
         {
             mode = 4;
-            parameters["@id"] = id - sql.ModeScoreIdOffset;
+            parameters["@id"] = id >= WebsiteModeScoreIdOffset && WebsiteModeScoreIdOffset > sql.ModeScoreIdOffset
+                ? id - WebsiteModeScoreIdOffset
+                : id - sql.ModeScoreIdOffset;
             where = "sc.raw_id = @id";
         }
         else
