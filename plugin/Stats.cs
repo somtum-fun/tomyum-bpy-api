@@ -31,16 +31,29 @@ internal static class Stats
         ["playtime"] = "total_seconds_played",
     };
 
-    /// <summary>The same keys in TomYum's user_stats (it keeps no play time).</summary>
-    public static readonly IReadOnlyDictionary<string, string> ModeColumns = new Dictionary<string, string>(StringComparer.Ordinal)
+    /// <summary>
+    /// The same keys for a Relax/Autopilot mode, as SQL on TomYum's user_stats (alias us). It keeps no play time:
+    /// that's worked out as TomYum does for the website's stats rows (OsuWebScoreMirror.WriteStatsAsync), the
+    /// lengths of the maps of the player's passed plays in the mode.
+    /// </summary>
+    public static string ModeSortSql(Sql sql, string key)
     {
-        ["tscore"] = "TotalScore",
-        ["rscore"] = "RankedScore",
-        ["pp"] = "Pp",
-        ["acc"] = "Accuracy",
-        ["plays"] = "PlayCount",
-        ["playtime"] = "0",
-    };
+        ArgumentNullException.ThrowIfNull(sql);
+        return key switch
+        {
+            "tscore" => "us.TotalScore",
+            "rscore" => "us.RankedScore",
+            "acc" => "us.Accuracy",
+            "plays" => "us.PlayCount",
+            "playtime" => ModePlaytimeSql(sql),
+            _ => "us.Pp",
+        };
+    }
+
+    /// <summary>A Relax/Autopilot player's play time in seconds (alias us = TomYum's user_stats): their passed plays' map lengths.</summary>
+    public static string ModePlaytimeSql(Sql sql) =>
+        $"(SELECT COALESCE(SUM(pb.TotalLength), 0) FROM {sql.T}.scores ps JOIN {sql.T}.beatmaps pb ON pb.Id = ps.BeatmapId"
+        + " WHERE ps.UserId = us.UserId AND ps.Mode = us.Mode AND ps.Passed)";
 
     private static readonly string[] Keys =
     [
@@ -82,7 +95,7 @@ internal static class Stats
 
         var columns =
             "CAST(us.Mode AS SIGNED) AS mode, CAST(us.TotalScore AS SIGNED) AS tscore, CAST(us.RankedScore AS SIGNED) AS rscore,"
-            + " CAST(ROUND(us.Pp) AS SIGNED) AS pp, CAST(us.PlayCount AS SIGNED) AS plays, CAST(0 AS SIGNED) AS playtime,"
+            + $" CAST(ROUND(us.Pp) AS SIGNED) AS pp, CAST(us.PlayCount AS SIGNED) AS plays, CAST({ModePlaytimeSql(sql)} AS SIGNED) AS playtime,"
             + " ROUND(us.Accuracy * 100, 3) AS acc,"
             + $" CAST((SELECT COALESCE(MAX(c.MaxCombo), 0) FROM {sql.T}.scores c WHERE c.UserId = us.UserId AND c.Mode = us.Mode) AS SIGNED) AS max_combo,"
             + $" CAST((SELECT COALESCE(SUM(c.Count300 + c.Count100 + c.Count50), 0) FROM {sql.T}.scores c WHERE c.UserId = us.UserId AND c.Mode = us.Mode) AS SIGNED) AS total_hits,"

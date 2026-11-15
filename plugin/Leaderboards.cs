@@ -51,12 +51,12 @@ internal static class Leaderboards
         }
         else
         {
-            var column = Stats.ModeColumns[sort] == "0" ? "0" : "us." + Stats.ModeColumns[sort];
+            var column = Stats.ModeSortSql(sql, sort);
             from = $" FROM {sql.T}.user_stats us JOIN {sql.O}.phpbb_users u ON u.user_id = us.UserId AND {Sql.Visible("u")}"
                 + $" WHERE us.Mode = @mode AND {column} > 0{sql.ModeActive("us")}";
             parameters["@mode"] = mode;
             columns = Stats.ModeColumnsSql(sql, withRanks: false);
-            order = column == "0" ? "u.user_id" : $"{column} DESC, u.user_id";
+            order = $"{column} DESC, u.user_id";
         }
 
         if (country is not null)

@@ -22,7 +22,7 @@ endpoints, matches, mappools and the Discord bot's actions) aren't part of it.
 | `priv` | made from the website's groups: `UNRESTRICTED`, `VERIFIED` (visible accounts), `SUPPORTER` (osu!supporter), `WHITELISTED` (TomYum's anti-cheat whitelist), `ALUMNI` (alumni), `TOURNEY_MANAGER` (tc), `NOMINATOR` (bng, bng_limited), `MODERATOR` (gmt), `ADMINISTRATOR` (admin), `DEVELOPER` (dev), `NAT` (nat), `HELPER` (spt). TomYum has nothing for `PREMIUM` or `VOTER`. |
 | `scores`, modes 0-3 (vanilla) | the website's `scores`: stable plays (mirrored there by TomYum) and lazer plays. Relax/Autopilot plays in it are left out, as on the website's vanilla boards. A stable play takes its exact score, mods and hit counts from TomYum's row; a lazer play's are converted the way the website converts them for osu!'s legacy API. |
 | `scores`, modes 4-6 and 8 (Relax, Autopilot) | TomYum's `scores` (stable plays and the lazer RX/AP plays TomYum takes in). |
-| `stats` | vanilla: the website's `osu_user_stats*`; Relax/Autopilot: TomYum's `user_stats` (grade counts and max combo from the player's best scores). |
+| `stats` | vanilla: the website's `osu_user_stats*`; Relax/Autopilot: TomYum's `user_stats` (grade counts and max combo from the player's best scores, play time from their passed plays' map lengths). |
 | `maps` | the website's `osu_beatmaps` and `osu_beatmapsets`, with TomYum's ranked status (bancho.py's numbers: 0 pending, 2 ranked, 3 approved, 4 qualified, 5 loved). |
 | `ranking_history` | vanilla: the website's daily rank history (`osu_user_performance_rank`); Relax/Autopilot: TomYum's `mode_rank_history`. |
 | `clans` | the website's teams (`teams`, `team_members`). The team leader is the clan owner; everyone else is "Member". |
@@ -46,8 +46,8 @@ there finds the same play. A bare TomYum id is read as a vanilla score id.
   lazer's (standardised) score. Map leaderboards are ordered by the website's standardised score, like
   the website. `status` 2 is a player's best play on the map by pp (then score), as bancho.py marks it.
 - `time_elapsed` is known for lazer plays only (0 for stable); `client_flags` is 0 and `online_checksum` "".
-- Relax/Autopilot stats have no play time (`playtime` 0, so sorting the Relax/Autopilot leaderboard by
-  `playtime` lists nobody) and no replay views.
+- Relax/Autopilot stats have no replay views. Their play time is worked out as TomYum does for the website's
+  stats: the map lengths of the player's passed plays in the mode.
 - Rank history has no daily country rank (`country_rank` 0).
 - `donor_end` is when osu!supporter runs out; `silence_end` comes from the website's silences.
   `userpage_content` is the website's userpage (BBCode), `location`/`interests`/`occupation` its profile fields.
