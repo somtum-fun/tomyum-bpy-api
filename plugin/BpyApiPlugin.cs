@@ -1,6 +1,6 @@
 // bancho.py's v1 API for TomYum — entry point: settings, routes, and the login-time hook.
 //
-// Serves every endpoint of bancho.py's app/api/v1/api.py (the osu!somtum fork) with the same paths,
+// Serves every endpoint of bancho.py's app/api/v1/api.py (the somtum.fun fork) with the same paths,
 // parameters, JSON and errors, on api.<domain>/v1/... (bancho.py's host) and
 // osu.<domain>/bpy-api/v1/..., from TomYum's and the website's databases. Needs only
 // TomYum.Plugins.Abstractions, and Plugins:Trusted for the database. Human docs: README.md.

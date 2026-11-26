@@ -1,7 +1,7 @@
 # tomyum-bpy-api
 
 A [TomYum](https://github.com/osu-somtum/TomYum) plugin that serves **bancho.py's public v1 API** (from
-bancho.py's `app/api/v1/api.py`, the osu!somtum fork) on top of TomYum's data, so tools and bots written
+bancho.py's `app/api/v1/api.py`, the somtum.fun fork) on top of TomYum's data, so tools and bots written
 for bancho.py keep working against a TomYum server. bancho.py's own extras (its API-key and session
 endpoints, matches, mappools and the Discord bot's actions) aren't part of it.
 
